@@ -1,4 +1,5 @@
 #!/bin/sh
+echo "========== Program to check even or odd =========="
 echo "Please enter a natural number: "
 read x
 

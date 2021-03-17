@@ -1,11 +1,14 @@
 #!/bin/sh
+
+echo "========== Program to check username and password =========="
+
 authenticate()
 {
     uname=$1
     pwd=$2
     if [[ "$uname" == "MasterX" ]]
     then
-        if [[ "$pwd" == "[xxXxx8xxXxx]" ]]
+        if [[ "$pwd" == "EasyPassword" ]]
     	then
         	echo "Username and password is valid"
     	else
