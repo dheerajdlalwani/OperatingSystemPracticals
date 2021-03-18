@@ -19,7 +19,7 @@ struct memory
 	struct section *end;
 };
 
-struct section *sectionStart, *sectionEnd, *sectionNext, *sectionNew, *sectionPrevious, *largestFreeBlock, *largestFreeBlockPrevious;
+struct section *sectionStart, *sectionEnd, *sectionNext, *sectionNew, *sectionPrevious, *largestFreeBlock, *largestFreeBlockPrevious, *smallestFreeBlock, *smallestFreeBlockPrevious;
 
 struct memory *memInfo;
 
@@ -58,7 +58,6 @@ void inputMemoryStatus()
 			{
 				sectionNew->occupiedStatus = true;
 			}
-			printf("Debug: Printing contents of sectionStart: %d | %s\n", sectionNew->memory, sectionNew->process);
 			printf("Do you want to add next section [Y/n] : ");
 			scanf("%c", &yesNo);
 			if (tolower(yesNo) == 'n')
@@ -93,7 +92,6 @@ void inputMemoryStatus()
 			{
 				sectionNew->occupiedStatus = true;
 			}
-			printf("Debug: Printing contents of sectionNew: %d | %s\n", sectionNew->memory, sectionNew->process);
 			printf("Do you want to add next section [Y/n] : ");
 			scanf("%c", &yesNo);
 			if (tolower(yesNo) == 'n')
@@ -128,7 +126,6 @@ void inputNewProcess()
 		getchar();
 		sectionNew->occupiedStatus = true;
 		sectionNew->next = NULL;
-		printf("Debug: Printing contents of sectionNew: %d | %s\n", sectionNew->memory, sectionNew->process);
 	}
 	else
 	{
@@ -160,9 +157,7 @@ void printMemoryStatus()
 
 void insertWorstFit()
 {
-	// DOING
 	int highestMemory = 0;
-	printf("Debug: Printing new memory required for %s : %d", sectionNew->process, sectionNew->memory);
 	printf("This will insert the new process in the memory, using worst fit.\n");
 	sectionPrevious = NULL;
 	sectionNext = memInfo->start;
@@ -170,20 +165,15 @@ void insertWorstFit()
 	largestFreeBlockPrevious = NULL;
 	while (sectionNext != NULL)
 	{
-		printf("Debug: Inside while, above if.\n");
 		if (sectionNext->occupiedStatus == 0 && sectionNext->memory > highestMemory && sectionNext->memory >= sectionNew->memory)
 		{
 			highestMemory = sectionNext->memory;
-			printf("Debug: Inside While, Inside if. \n");
 			largestFreeBlock = sectionNext;
 			largestFreeBlockPrevious = sectionPrevious;
-			printf("Debug: printing largest free block memory: %d\n", largestFreeBlock->memory);
-			printf("Debug: printing largest free block previous memory: %d\n", largestFreeBlockPrevious->memory);
 		}
 		sectionPrevious = sectionNext;
 		sectionNext = sectionNext->next;
 	}
-	printf("Debug: outside while.");
 	if (largestFreeBlock == NULL)
 	{
 		printf("No free blocks available... Exiting...\n");
@@ -191,29 +181,24 @@ void insertWorstFit()
 	}
 	else if (largestFreeBlock != NULL && largestFreeBlockPrevious == NULL && largestFreeBlock->memory > sectionNew->memory)
 	{
-		printf("Debug: Line 194 \n");
 		sectionNew->next = memInfo->start;
 		memInfo->start->memory = memInfo->start->memory - sectionNew->memory;
 		memInfo->start = sectionNew;
 	}
 	else if (largestFreeBlock != NULL && largestFreeBlockPrevious == NULL && largestFreeBlock->memory == sectionNew->memory)
 	{
-		printf("Debug: Line 201 \n");
 		sectionNew->next = memInfo->start->next;
 		memInfo->start = sectionNew;
 	}
 
 	else if (largestFreeBlock != NULL && largestFreeBlockPrevious != NULL && largestFreeBlock->memory > sectionNew->memory)
 	{
-		printf("Debug: Line 208 \n");
-		printf("Debug: printing largest free block previous -> next memory: %d\n", largestFreeBlockPrevious->next->memory);
 		sectionNew->next = largestFreeBlockPrevious->next;
 		largestFreeBlock->memory = largestFreeBlock->memory - sectionNew->memory;
 		largestFreeBlockPrevious->next = sectionNew;
 	}
 	else if (largestFreeBlock != NULL && largestFreeBlockPrevious != NULL && largestFreeBlock->memory == sectionNew->memory)
 	{
-		printf("Debug: Line 215 \n");
 		sectionNew->next = largestFreeBlockPrevious->next->next;
 		largestFreeBlockPrevious->next = sectionNew;
 	}
@@ -267,11 +252,64 @@ void insertFirstFit()
 	printMemoryStatus();
 }
 
-bool insertBestFit()
+void insertBestFit()
 {
-	// TODO
-	printf("This will insert the new process in the memory, using worst fit.\n");
-	return false;
+	// DOING
+	printf("This will insert the new process in the memory, using best fit.\n");
+	sectionNext = memInfo->start;
+	while (sectionNext->occupiedStatus != 0)
+	{
+		sectionNext = sectionNext->next;
+	}
+	int lowestMemory = sectionNext->memory;
+	sectionPrevious = NULL;
+	sectionNext = memInfo->start;
+	smallestFreeBlock = NULL;
+	smallestFreeBlockPrevious = NULL;
+	while (sectionNext != NULL)
+	{
+		if (sectionNext->occupiedStatus == 0 && sectionNext->memory < lowestMemory && sectionNext->memory >= sectionNew->memory)
+		{
+			lowestMemory = sectionNext->memory;
+			smallestFreeBlock = sectionNext;
+			smallestFreeBlockPrevious = sectionPrevious;
+		}
+		sectionPrevious = sectionNext;
+		sectionNext = sectionNext->next;
+	}
+	if (smallestFreeBlock == NULL)
+	{
+		printf("No free blocks available... Exiting...\n");
+		exit(0);
+	}
+	else if (smallestFreeBlock != NULL && smallestFreeBlockPrevious == NULL && smallestFreeBlock->memory > sectionNew->memory)
+	{
+		sectionNew->next = memInfo->start;
+		memInfo->start->memory = memInfo->start->memory - sectionNew->memory;
+		memInfo->start = sectionNew;
+	}
+	else if (smallestFreeBlock != NULL && smallestFreeBlockPrevious == NULL && smallestFreeBlock->memory == sectionNew->memory)
+	{
+		sectionNew->next = memInfo->start->next;
+		memInfo->start = sectionNew;
+	}
+
+	else if (smallestFreeBlock != NULL && smallestFreeBlockPrevious != NULL && smallestFreeBlock->memory > sectionNew->memory)
+	{
+		sectionNew->next = smallestFreeBlockPrevious->next;
+		smallestFreeBlock->memory = smallestFreeBlock->memory - sectionNew->memory;
+		smallestFreeBlockPrevious->next = sectionNew;
+	}
+	else if (smallestFreeBlock != NULL && smallestFreeBlockPrevious != NULL && smallestFreeBlock->memory == sectionNew->memory)
+	{
+		sectionNew->next = smallestFreeBlockPrevious->next->next;
+		smallestFreeBlockPrevious->next = sectionNew;
+	}
+	else
+	{
+		printf("No sufficient memory slot available. Exiting...\n");
+	}
+	printMemoryStatus();
 }
 
 int menu()
@@ -314,6 +352,5 @@ int main()
 			exit(0);
 		}
 	} while (choice <= 4 && choice >= 1);
-
 	return 0;
 }
