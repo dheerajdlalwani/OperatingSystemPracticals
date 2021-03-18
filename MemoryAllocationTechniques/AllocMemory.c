@@ -2,16 +2,36 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 struct section
 {
 	int memory;
 	bool occupiedStatus;
-	char process[3];
+	char process[5];
 	struct section *next;
 };
 
-struct section *sectionStart, *sectionEnd, *sectionNext, *kaamKaSection;
+struct memory
+{
+	int sectionCount;
+	struct section *start;
+	struct section *end;
+};
+
+struct section *sectionStart,
+    *sectionEnd, *sectionNext, *sectionNew;
+
+struct memory *memInfo;
+
+void initializeMemory()
+{
+	printf("Initializing memory...\n");
+	memInfo = (struct memory *)malloc(sizeof(struct memory));
+	memInfo->sectionCount = 0;
+	memInfo->start = NULL;
+	memInfo->end = NULL;
+}
 
 void inputMemoryStatus()
 {
@@ -21,59 +41,75 @@ void inputMemoryStatus()
 
 	do
 	{
-		if (sectionStart == NULL)
+		if (memInfo->start == NULL)
 		{
-			struct section *sectionStart;
-			sectionStart = (struct section *)malloc(sizeof(struct section));
-			printf("Please enter Process name (Enter f if the memory block is free) : ");
-			scanf("%s", sectionStart->process);
+			// struct section *sectionStart;
+			sectionNew = (struct section *)malloc(sizeof(struct section));
+			printf("Please enter Process name (Enter free if the memory block is free) : ");
+			scanf("%s", sectionNew->process);
 			getchar();
-			printf("Please enter %s memory : ", sectionStart->process);
-			scanf("%d", &sectionStart->memory);
+			printf("Please enter %s memory : ", sectionNew->process);
+			scanf("%d", &sectionNew->memory);
 			getchar();
-			if (sectionStart->process == "f")
+			if (strcmp(sectionNew->process, "free") == 0)
 			{
-				sectionStart->occupiedStatus = false;
+				sectionNew->occupiedStatus = false;
 			}
 			else
 			{
-				sectionStart->occupiedStatus = true;
+				sectionNew->occupiedStatus = true;
 			}
+			printf("Debug: Printing contents of sectionStart: %d | %s\n", sectionNew->memory, sectionNew->process);
 			printf("Do you want to add next section [Y/n] : ");
 			scanf("%c", &yesNo);
 			if (tolower(yesNo) == 'n')
 			{
 				ongoing = false;
-				sectionStart->next = NULL;
-				sectionEnd = sectionStart;
+				sectionNew->next = NULL;
+				memInfo->start = sectionNew;
+				memInfo->end = sectionNew;
 				break;
 			}
 			else
 			{
+				memInfo->start = sectionNew;
+				memInfo->end = sectionNew;
 				continue;
 			}
 		}
 		else
 		{
-			sectionNext = (struct section *)malloc(sizeof(struct section));
-			printf("Please enter Process name: ");
-			scanf("%s", sectionNext->process);
-			printf("Please enter memory needed for %s: ", sectionNext->process);
-			scanf("%d", &sectionNext->memory);
-			sectionNext->occupiedStatus = true;
-			sectionNext->next = NULL;
-			sectionEnd->next = sectionNext;
+			sectionNew = (struct section *)malloc(sizeof(struct section));
+			printf("Please enter Process name (Enter free if the memory block is free) : ");
+			scanf("%s", sectionNew->process);
+			getchar();
+			printf("Please enter %s memory : ", sectionNew->process);
+			scanf("%d", &sectionNew->memory);
+			getchar();
+			if (strcmp(sectionNew->process, "free") == 0)
+			{
+				sectionNew->occupiedStatus = false;
+			}
+			else
+			{
+				sectionNew->occupiedStatus = true;
+			}
+			printf("Debug: Printing contents of sectionStart: %d | %s\n", sectionNew->memory, sectionNew->process);
 			printf("Do you want to add next section [Y/n] : ");
-			yesNo = fgetc(stdin);
+			scanf("%c", &yesNo);
 			if (tolower(yesNo) == 'n')
 			{
 				ongoing = false;
-				sectionNext->next = NULL;
-				sectionEnd = sectionNext;
+				sectionNew->next = NULL;
+				memInfo->end->next = sectionNew;
+				memInfo->end = sectionNew;
 				break;
 			}
 			else
 			{
+				sectionNew->next = NULL;
+				memInfo->end->next = sectionNew;
+				memInfo->end = sectionNew;
 				continue;
 			}
 		}
@@ -84,6 +120,7 @@ bool inputNewProcess()
 {
 	// TODO
 	printf("This will take input of the new process.\n");
+
 	return false;
 }
 
@@ -110,8 +147,25 @@ bool insertWorstFit()
 
 void printMemoryStatus()
 {
-	// TODO
+	// DOING
+	char status[3];
 	printf("This will print the status of the memory.\n");
+	printf("|  %8s  |  %7s  |  %7s  |\n", "Section", "Memory", "Status");
+	sectionNext = memInfo->start;
+	while (sectionNext != NULL)
+	{
+		if (sectionNext->occupiedStatus == 0)
+		{
+			strcpy(status, "F");
+		}
+		else
+		{
+			strcpy(status, "NF");
+		}
+		printf("|  %8s  |  %7d  |  %7s  |\n", sectionNext->process, sectionNext->memory, status);
+		sectionNext = sectionNext->next;
+	}
+	printf("=============================================\n");
 }
 
 int menu()
@@ -129,6 +183,7 @@ int menu()
 int main()
 {
 	int choice;
+	initializeMemory();
 	printf("Welcome to memory simulation system.\n\n");
 	inputMemoryStatus();
 	printMemoryStatus();
