@@ -20,7 +20,7 @@ struct memory
 };
 
 struct section *sectionStart,
-    *sectionEnd, *sectionNext, *sectionNew;
+    *sectionEnd, *sectionNext, *sectionNew, *sectionPrevious;
 
 struct memory *memInfo;
 
@@ -94,7 +94,7 @@ void inputMemoryStatus()
 			{
 				sectionNew->occupiedStatus = true;
 			}
-			printf("Debug: Printing contents of sectionStart: %d | %s\n", sectionNew->memory, sectionNew->process);
+			printf("Debug: Printing contents of sectionNew: %d | %s\n", sectionNew->memory, sectionNew->process);
 			printf("Do you want to add next section [Y/n] : ");
 			scanf("%c", &yesNo);
 			if (tolower(yesNo) == 'n')
@@ -116,38 +116,29 @@ void inputMemoryStatus()
 	} while (ongoing);
 }
 
-bool inputNewProcess()
+void inputNewProcess()
 {
-	// TODO
-	printf("This will take input of the new process.\n");
-
-	return false;
-}
-
-bool insertBestFit()
-{
-	// TODO
-	printf("This will insert the new process in the memory, using best fit.\n");
-	return false;
-}
-
-bool insertFirstFit()
-{
-	// TODO
-	printf("This will insert the new process in the memory, using first fit.\n");
-	return false;
-}
-
-bool insertWorstFit()
-{
-	// TODO
-	printf("This will insert the new process in the memory, using worst fit.\n");
-	return false;
+	sectionNew = (struct section *)malloc(sizeof(struct section));
+	if (sectionNew != NULL)
+	{
+		printf("Please enter Process name : ");
+		scanf("%s", sectionNew->process);
+		getchar();
+		printf("Please enter %s memory : ", sectionNew->process);
+		scanf("%d", &sectionNew->memory);
+		getchar();
+		sectionNew->occupiedStatus = true;
+		sectionNew->next = NULL;
+		printf("Debug: Printing contents of sectionNew: %d | %s\n", sectionNew->memory, sectionNew->process);
+	}
+	else
+	{
+		printf("Insufficient memory, exiting .... \n");
+	}
 }
 
 void printMemoryStatus()
 {
-	// DOING
 	char status[3];
 	printf("This will print the status of the memory.\n");
 	printf("|  %8s  |  %7s  |  %7s  |\n", "Section", "Memory", "Status");
@@ -166,6 +157,68 @@ void printMemoryStatus()
 		sectionNext = sectionNext->next;
 	}
 	printf("=============================================\n");
+}
+
+bool insertBestFit()
+{
+	// TODO
+	printf("This will insert the new process in the memory, using best fit.\n");
+	return false;
+}
+
+void insertFirstFit()
+{
+	// DOING
+	printf("This will insert the new process in the memory, using first fit.\n");
+	sectionPrevious = NULL;
+	sectionNext = memInfo->start;
+	while (sectionNext != NULL)
+	{
+		if (sectionNext->occupiedStatus == 0 && sectionNext->memory >= sectionNew->memory)
+		{
+			break;
+		}
+		sectionPrevious = sectionNext;
+		sectionNext = sectionNext->next;
+	}
+	if (sectionPrevious == NULL && sectionNext->occupiedStatus == 0 && sectionNext->memory > sectionNew->memory)
+	{
+		sectionNew->next = memInfo->start;
+		memInfo->start->memory = memInfo->start->memory - sectionNew->memory;
+		memInfo->start = sectionNew;
+		printf("Debug: on Line 189\n");
+	}
+	else if (sectionPrevious == NULL && sectionNext->occupiedStatus == 0 && sectionNext->memory == sectionNew->memory)
+	{
+		sectionNew->next = memInfo->start->next;
+		memInfo->start = sectionNew;
+		printf("Debug: on Line 195\n");
+	}
+	else if (sectionPrevious != NULL && sectionNext->occupiedStatus == 0 && sectionNext->memory > sectionNew->memory)
+	{
+		sectionNew->next = sectionPrevious->next;
+		sectionNext->memory = sectionNext->memory - sectionNew->memory;
+		sectionPrevious->next = sectionNew;
+		printf("Debug: on Line 202\n");
+	}
+	else if (sectionPrevious != NULL && sectionNext->occupiedStatus == 0 && sectionNext->memory == sectionNew->memory)
+	{
+		sectionNew->next = sectionPrevious->next->next;
+		sectionPrevious->next = sectionNew;
+		printf("Debug: on Line 208\n");
+	}
+	else
+	{
+		printf("No sufficient memory slot available. Exiting...\n");
+	}
+	printMemoryStatus();
+}
+
+bool insertWorstFit()
+{
+	// TODO
+	printf("This will insert the new process in the memory, using worst fit.\n");
+	return false;
 }
 
 int menu()
@@ -187,6 +240,7 @@ int main()
 	printf("Welcome to memory simulation system.\n\n");
 	inputMemoryStatus();
 	printMemoryStatus();
+	inputNewProcess();
 	do
 	{
 		choice = menu();
