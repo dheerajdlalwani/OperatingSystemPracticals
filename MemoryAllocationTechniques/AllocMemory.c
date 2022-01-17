@@ -72,7 +72,6 @@ void inputMemoryStatus()
 			{
 				memInfo->start = sectionNew;
 				memInfo->end = sectionNew;
-				continue;
 			}
 		}
 		else
@@ -107,7 +106,6 @@ void inputMemoryStatus()
 				sectionNew->next = NULL;
 				memInfo->end->next = sectionNew;
 				memInfo->end = sectionNew;
-				continue;
 			}
 		}
 	} while (ongoing);
@@ -225,12 +223,16 @@ void insertFirstFit()
 	}
 	if (sectionPrevious == NULL && sectionNext->occupiedStatus == 0 && sectionNext->memory > sectionNew->memory)
 	{
+		// This section is executed, iff 1st slot is empty && a hole is going to be created.
 		sectionNew->next = memInfo->start;
 		memInfo->start->memory = memInfo->start->memory - sectionNew->memory;
 		memInfo->start = sectionNew;
+
+		printf("Debug: Printing contents of memInf->start | %s | %d | \n", memInfo->start->process, memInfo->start->memory);
 	}
 	else if (sectionPrevious == NULL && sectionNext->occupiedStatus == 0 && sectionNext->memory == sectionNew->memory)
 	{
+		printf("Debug: print memory->start->next %s", memInfo->start->next->process);
 		sectionNew->next = memInfo->start->next;
 		memInfo->start = sectionNew;
 	}

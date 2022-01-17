@@ -1,0 +1,72 @@
+available array [m]
+  - m = number of types of resources
+  - indicates number of available resources of each type
+
+max demand [n][m]
+  - n = number of processes
+  - defines maximum demand of each resource by each processes
+
+allocation [n][m]
+  - defines number of each resource allocated to each process
+
+need [n][m]
+  - defines number of each resource still needed by each process
+
+Baneker's Algorithm runs every time a process puts forth a request fora resource.
+
+
+
+
+
+Pranav
+Budget Tracker
+  - https://github.com/Pranav1642/Expense-Tracker
+  - https://expense-tracker03.herokuapp.com
+
+
+Darshan
+Hearty
+  - https://play.google.com/store/apps/details?id=com.darshan.heartry
+
+
+Yash
+Coin Hunter
+  - https://github.com/YashKhatwani/Yash-_Coin_Hunter.git
+John Cena
+  - https://project-for-bootcamp.yashkhatwani.repl.co/#
+Documentation
+  - https://codepen.io/Yash_04/full/vYNQKeM
+
+Dheeraj
+URL Shortener
+  - https://github.com/dheerajdlalwani/url-shortener
+
+
+React Resources, shared by Jay
+  - https://github.com/Asabeneh/30-Days-Of-React
+
+
+
+
+
+Suggesyti
+
+Remove Auto fill
+and 
+Placeholder me eg: ke aage space
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

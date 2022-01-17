@@ -1,0 +1,56 @@
+1) https://docs.google.com/document/d/1wdH61kjGzqY5RCkl9WuIzBY0eQ-tSo8a/edit
+
+2) https://docs.google.com/document/d/1wPEeOhZ9yH6NRSPO0oP1OvTMWECtgTmLTBoRtnePvAk/edit
+
+3) http://www2.cs.uregina.ca/~hamilton/courses/330/notes/io/node7.html
+
+4) http://cs.gordon.edu/courses/cs322/lectures/disk_scheduling.html
+
+5) http://www.cs.iit.edu/~cs561/cs450/disksched/disksched.html
+
+6) https://dextutor.com/disk-scheduling-algorithms/
+
+7) https://suraj1693.blogspot.com/2013/11/program-to-implement-sstf-disk.html
+
+
+
+if (abs(current_track - queue[i].number) > shortest && queue[i].visited == 0)
+        {
+            shortest = queue[i].number;
+        }
+    }
+    printf("Debug: shortest {actually Largest unvisited} = %d\n", shortest);
+    for (i = 0; i < number_of_tracks; i++)
+    {
+        printf("Debug: abs(current_track - queue[i].number) = %d \n", abs(current_track - queue[i].number));
+        printf("Debug: abs(shortest - queue[i].number) = %d \n", abs(shortest - queue[i].number));
+        if (abs(current_track - queue[i].number) < abs(shortest - queue[i].number))
+        {
+            printf("Debug: closest track now is: %d", closest_track);
+            closest_track = queue[i].number;
+        }
+
+
+
+
+
+0, 16, 24, 43, 82, 140, 170, 190, 199
+
+
+
+Head = 50
+
+
+
+
+
+50, 34, 11, 180, 123, 119, 95, 64, 62
+
+
+
+
+
+
+
+
+
